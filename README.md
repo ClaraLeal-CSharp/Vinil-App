@@ -2,7 +2,7 @@
 
 O VinilApp é um aplicativo Android nativo concebido como um *Now Playing Display*: ele exibirá as informações da música reproduzida por outros aplicativos. Não é um player de música. A futura integração usará exclusivamente APIs oficiais do Android, como `MediaSession` e `NotificationListenerService`.
 
-Nesta etapa, o projeto contém apenas a base técnica: estrutura de pacotes, navegação, DI, tema, qualidade de código, uma tela inicial estática e documentação. Nenhuma integração de mídia foi implementada.
+Nesta etapa, o projeto contém apenas a base técnica: estrutura de pacotes, navegação, DI, sistema de temas, qualidade de código, uma tela inicial estática e documentação. Nenhuma integração de mídia ou player foi implementado.
 
 ## Tecnologias
 
@@ -45,7 +45,7 @@ O projeto aplica MVVM na interface e separa responsabilidades em camadas:
 - `feature`: rotas, telas, estado de interface e ViewModels.
 - `domain`: contratos e modelos independentes do Android.
 - `data`: contratos e implementações futuras das fontes oficiais de mídia.
-- `core`: componentes visuais e utilitários compartilhados.
+- `core`: design system, sistema de temas e utilitários compartilhados.
 - `app`: composição da aplicação, navegação e ponto de entrada Compose.
 - `di`: módulos Hilt que ligarão contratos e implementações.
 - `service`: pontos de extensão para serviços Android futuros, ainda inativos.
@@ -59,7 +59,8 @@ A árvore completa e atualizada está em [DIRECTORY_TREE.md](docs/DIRECTORY_TREE
 ## Funcionalidades atuais
 
 - Projeto Android configurado para API 36.
-- Tema Material 3 com suporte ao modo escuro do sistema.
+- Sistema de temas desacoplado com tokens para cores, fontes, tamanhos, animações, discos, fundos e controles.
+- Tema padrão aplicado sobre Compose e Material 3, sem cores fixas nos componentes.
 - Navegação Compose centralizada com destino inicial de Now Playing.
 - Hilt configurado para Activity, Application, ViewModel e módulos futuros.
 - Tela inicial estática de Now Playing e ViewModel de base, sem conexão com dados externos.

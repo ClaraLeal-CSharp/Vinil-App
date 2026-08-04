@@ -20,11 +20,9 @@ VinilApp/
 │       │   │       ├── AppDestination.kt
 │       │   │       └── VinilNavHost.kt
 │       │   ├── core/designsystem/
-│       │   │   ├── AppDimensions.kt
 │       │   │   └── theme/
-│       │   │       ├── Color.kt
 │       │   │       ├── Theme.kt
-│       │   │       └── Type.kt
+│       │   │       └── VinilThemeTokens.kt
 │       │   ├── data/
 │       │   │   ├── mediaplayback/MediaSessionDataSource.kt
 │       │   │   ├── notification/NotificationDataSource.kt
@@ -61,4 +59,4 @@ VinilApp/
 └── settings.gradle.kts
 ```
 
-Os contratos e marcadores de `data` e `service` não acessam APIs Android nesta etapa. Eles existem para estabilizar as fronteiras entre as camadas antes da implementação da detecção de mídia.
+Os contratos e marcadores de `data` e `service` não acessam APIs Android nesta etapa. Eles existem para estabilizar as fronteiras entre as camadas antes da implementação da detecção de mídia. O design system centraliza os tokens visuais no tema; telas e componentes não devem definir cores ou estilos fixos.

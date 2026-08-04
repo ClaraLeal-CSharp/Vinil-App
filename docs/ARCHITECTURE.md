@@ -40,7 +40,9 @@ Contém o marcador para o futuro listener de notificações. Ele não estende `N
 
 ### `core`
 
-Reúne componentes transversais. Neste momento contém o tema Material 3 e dimensões compartilhadas. Recursos reutilizáveis futuros devem entrar aqui somente quando forem realmente comuns a mais de uma feature.
+Reúne componentes transversais. O design system expõe `VinilTheme`, um contrato visual próprio baseado em tokens e desacoplado das features. O tema padrão cobre cores, fontes, tamanhos, animações, discos, fundos e controles; componentes de tela devem consumir esses tokens em vez de declarar cores, medidas ou estilos locais.
+
+O Material 3 permanece como biblioteca de componentes, mas recebe `ColorScheme`, `Typography` e `Shapes` derivados do tema do VinilApp. Assim, futuros temas podem trocar aparência sem alterar as telas.
 
 ## Fluxo de dados planejado
 
@@ -58,4 +60,5 @@ Reúne componentes transversais. Neste momento contém o tema Material 3 e dimen
 - Hilt está configurado para a composição futura das dependências, sem fontes de dados ativas.
 - Android Lint e ktlint protegem a consistência técnica e de estilo.
 - Strings de interface ficam em recursos Android para permitir localização.
+- Estilos visuais entram pelo `VinilTheme`; features não devem manter cores fixas ou dimensões próprias.
 - Não há serviço, listener, permissão especial ou leitura de dados nesta etapa.
