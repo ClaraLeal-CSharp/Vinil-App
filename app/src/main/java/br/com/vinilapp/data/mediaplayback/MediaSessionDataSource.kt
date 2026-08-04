@@ -1,4 +1,9 @@
 package br.com.vinilapp.data.mediaplayback
 
-/** Contrato futuro para acesso às sessões de mídia expostas pelo Android. */
-interface MediaSessionDataSource
+import br.com.vinilapp.domain.model.NowPlayingState
+import kotlinx.coroutines.flow.Flow
+
+/** Fonte de sessões de mídia expostas pelo Android. */
+interface MediaSessionDataSource {
+    fun observeNowPlaying(): Flow<NowPlayingState>
+}

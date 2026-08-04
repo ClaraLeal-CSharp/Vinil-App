@@ -20,23 +20,23 @@ Centraliza a composição da aplicação. `VinilApplication` inicializa Hilt, `M
 
 ### `feature`
 
-Agrupa cada recurso por contexto. Hoje contém `nowplaying/presentation`, com rota, tela principal mockada, estado de UI e `ViewModel`. A interface exibe disco, capa central, metadados falsos, progresso e controles visuais, mas os botões não executam reprodução e a tela não conhece APIs Android de mídia.
+Agrupa cada recurso por contexto. Hoje contém `nowplaying/presentation`, com rota, tela principal, estado de UI e `ViewModel`. A interface exibe disco, capa central, metadados de mídia, progresso e controles visuais. Os botões ainda não executam reprodução e a tela não conhece diretamente APIs Android de mídia.
 
 ### `domain`
 
-Contém regras e contratos independentes de implementação. `NowPlayingRepository` será consumido pelo caso de uso ou ViewModel quando houver uma fonte de dados concreta. `NowPlayingState` representa o estado de domínio atual.
+Contém regras e contratos independentes da implementação concreta. `NowPlayingRepository` é consumido pelo caso de uso e pelo ViewModel. `NowPlayingState` representa o estado atual, com variação indisponível ou metadados detectados.
 
 ### `data`
 
-Contém contratos vazios para fontes de `MediaSession` e de notificações, além do local reservado para a implementação de repositório. Nas próximas etapas deverá concentrar os adaptadores das APIs oficiais. Nenhuma coleta existe ainda.
+Contém o contrato de `MediaSessionDataSource`, a implementação `AndroidMediaSessionDataSource` e o repositório. A fonte usa `MediaSessionManager` para observar sessões ativas e recebe tokens/snapshots do listener de notificações como complemento. O mapeamento extrai título, artista, álbum, duração, posição calculada, capa em `Bitmap`, pacote e nome do aplicativo responsável.
 
 ### `di`
 
-Contém os módulos Hilt de escopo de processo. `AppModule` receberá dependências compartilhadas e `RepositoryModule` ligará interfaces de `domain` às implementações de `data` assim que elas existirem. Os módulos não fornecem objetos nesta etapa.
+Contém os módulos Hilt de escopo de processo. `AppModule` fornece `MediaSessionManager` e `RepositoryModule` liga interfaces de `domain` e `data` às implementações concretas.
 
 ### `service`
 
-Contém o marcador para o futuro listener de notificações. Ele não estende `NotificationListenerService` nem aparece no manifest; logo, não declara permissão, não é iniciado e não lê notificações.
+Contém `NowPlayingNotificationListenerService`, declarado no manifest com `android.permission.BIND_NOTIFICATION_LISTENER_SERVICE`. O serviço é ativado pelo Android quando o usuário concede acesso a notificações. Ele coleta notificações de transporte, extrai tokens de sessão e fornece fallback básico por extras de notificação.
 
 ### `core`
 
@@ -50,19 +50,23 @@ O Material 3 permanece como biblioteca de componentes, mas recebe `ColorScheme`,
 
 ## Fluxo de dados planejado
 
-1. Uma fonte Android observa sessões ou notificações autorizadas.
+1. `AndroidMediaSessionDataSource` observa sessões ativas via `MediaSessionManager`.
 2. Um repositório em `data` transforma o resultado em `NowPlayingState`.
 3. O contrato em `domain` expõe um `Flow`.
 4. O ViewModel converte o estado de domínio em estado de apresentação.
 5. A tela Compose coleta o estado de modo ciente do ciclo de vida.
 
+O `NotificationListenerService` complementa esse fluxo enviando tokens e snapshots de notificações de mídia ao data source. Quando múltiplas sessões existem, a fonte prioriza sessões em reprodução, depois sessões com metadados exibíveis e, por fim, a sessão com atualização de posição mais recente.
+
 ## Decisões atuais
 
 - Coroutines e `Flow` serão o mecanismo de atualização assíncrona.
-- Coil está disponível para carregar futuras imagens de capa.
+- Capas são lidas de `MediaMetadata` ou do ícone da notificação quando disponíveis.
 - Navigation Compose concentra os destinos em `app/navigation`.
 - Hilt está configurado para a composição futura das dependências, sem fontes de dados ativas.
 - Android Lint e ktlint protegem a consistência técnica e de estilo.
 - Strings de interface ficam em recursos Android para permitir localização.
 - Estilos visuais entram pelo `VinilTheme`; features não devem manter cores fixas ou dimensões próprias.
-- A interface principal usa dados mockados e controles sem ação; não há player, serviço, listener, permissão especial, `MediaSession` ativa ou leitura de dados nesta etapa.
+- A integração depende da permissão manual de acesso a notificações; sem ela, o Android não permite consultar sessões de outros apps.
+- O app não usa APIs experimentais nem implementa player próprio.
+- A interface principal usa dados reais quando disponíveis e controles sem ação; comandos de reprodução ficam para etapa futura.

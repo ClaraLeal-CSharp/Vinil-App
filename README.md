@@ -1,8 +1,8 @@
 # VinilApp
 
-O VinilApp é um aplicativo Android nativo concebido como um *Now Playing Display*: ele exibirá as informações da música reproduzida por outros aplicativos. Não é um player de música. A futura integração usará exclusivamente APIs oficiais do Android, como `MediaSession` e `NotificationListenerService`.
+O VinilApp é um aplicativo Android nativo concebido como um *Now Playing Display*: ele exibe informações da música reproduzida por outros aplicativos. Não é um player de música. A integração usa APIs oficiais do Android: `MediaSessionManager` e `NotificationListenerService`.
 
-Nesta etapa, o projeto contém a base técnica e a interface principal mockada: estrutura de pacotes, navegação, DI, sistema de temas, qualidade de código, tela Now Playing responsiva e documentação. Nenhuma integração de mídia ou player foi implementado.
+Nesta etapa, o projeto contém a base técnica, a interface principal e a comunicação Android para leitura de metadados de mídia quando o player expõe uma sessão compatível ou uma notificação de transporte.
 
 ## Tecnologias
 
@@ -10,7 +10,7 @@ Nesta etapa, o projeto contém a base técnica e a interface principal mockada: 
 - Jetpack Compose com Material 3
 - Arquitetura MVVM, com separação inspirada em Clean Architecture
 - Navigation Compose e Hilt, preparados para o crescimento do aplicativo
-- Coil, preparado para o carregamento futuro das capas
+- Coil, disponível para evolução do carregamento de capas
 - Gradle Kotlin DSL e Gradle Wrapper
 - Android Lint e ktlint
 - `compileSdk` e `targetSdk` 36; `minSdk` 24
@@ -38,17 +38,27 @@ Nesta etapa, o projeto contém a base técnica e a interface principal mockada: 
 
 O APK de depuração é produzido em `app/build/outputs/apk/debug/app-debug.apk`.
 
+## Permissão de mídia
+
+O Android exige autorização manual para que um app leia notificações e consulte sessões de mídia de outros aplicativos. Após instalar o APK, habilite o VinilApp em:
+
+```text
+Configurações do Android → Notificações → Acesso a notificações → VinilApp
+```
+
+O caminho pode variar por fabricante. Sem essa permissão, a tela permanece em estado sem mídia ativa.
+
 ## Arquitetura
 
 O projeto aplica MVVM na interface e separa responsabilidades em camadas:
 
 - `feature`: rotas, telas, estado de interface e ViewModels.
 - `domain`: contratos e modelos independentes do Android.
-- `data`: contratos e implementações futuras das fontes oficiais de mídia.
+- `data`: contratos e implementação da fonte de `MediaSessionManager`.
 - `core`: design system, sistema de temas e utilitários compartilhados.
 - `app`: composição da aplicação, navegação e ponto de entrada Compose.
-- `di`: módulos Hilt que ligarão contratos e implementações.
-- `service`: pontos de extensão para serviços Android futuros, ainda inativos.
+- `di`: módulos Hilt que ligam contratos e implementações.
+- `service`: `NotificationListenerService` que complementa a descoberta de sessões e notificações de mídia.
 
 Consulte [ARCHITECTURE.md](docs/ARCHITECTURE.md) para os detalhes.
 
@@ -63,18 +73,18 @@ A árvore completa e atualizada está em [DIRECTORY_TREE.md](docs/DIRECTORY_TREE
 - Tema padrão aplicado sobre Compose e Material 3, sem cores fixas nos componentes.
 - Navegação Compose centralizada com destino inicial de Now Playing.
 - Hilt configurado para Activity, Application, ViewModel e módulos futuros.
-- Interface principal de Now Playing com disco, capa central, metadados mockados, barra de progresso e botões sem ação real.
+- Interface principal de Now Playing com disco, capa central, metadados reais quando disponíveis, barra de progresso e botões sem ação real.
 - Layout responsivo baseado em tokens de tema, com o disco ocupando a área visual dominante da tela.
-- ViewModel de base sem conexão com dados externos.
-- Contratos de dados, domínio e serviço criados sem acesso às APIs Android.
+- ViewModel conectado ao caso de uso de reprodução atual.
+- Leitura automática de título, artista, álbum, duração, posição, capa, pacote e nome do aplicativo responsável.
+- Priorização de sessões em reprodução e fallback por notificação de transporte quando não houver uma sessão mapeável.
 - Lint Android e ktlint configurados.
 - Configuração de extensões recomendadas para VS Code.
 
 ## Funcionalidades futuras
 
-- Detecção de sessões de mídia com `MediaSession`.
-- Leitura opcional de notificações através de `NotificationListenerService`.
-- Substituição dos dados mockados por capa, título, artista e estado de reprodução vindos das APIs oficiais.
-- Personalização visual, animação do disco e preferências persistentes.
+- Fluxo de onboarding para abrir diretamente a tela de permissão de acesso a notificações.
+- Controles de reprodução conectados a sessões compatíveis.
+- Personalização visual e preferências persistentes.
 
 O planejamento completo está em [ROADMAP.md](docs/ROADMAP.md), e o histórico relevante em [CHANGELOG.md](docs/CHANGELOG.md).

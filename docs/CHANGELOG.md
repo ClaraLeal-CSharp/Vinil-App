@@ -20,3 +20,7 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo.
 - Dependências de Coroutines, Lifecycle ViewModel e Coil.
 - Documentação de arquitetura, diretórios e roadmap.
 - Recomendações de extensões para VS Code.
+- Comunicação Android com `NotificationListenerService` e `MediaSessionManager`.
+- Detecção de título, artista, álbum, duração, posição, capa e aplicativo responsável a partir de sessões de mídia compatíveis.
+- Fallback por notificação de transporte quando o player não entrega uma sessão mapeável.
+- Estado visual sem mídia ativa no lugar dos dados mockados.

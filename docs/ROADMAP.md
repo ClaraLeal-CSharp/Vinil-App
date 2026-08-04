@@ -16,16 +16,17 @@
 
 ## Etapa 1 — Fonte de dados de mídia
 
-- [ ] Implementar observação de `MediaSession` com APIs oficiais.
-- [ ] Definir tratamento para múltiplas sessões ativas.
-- [ ] Adicionar `NotificationListenerService` como fonte complementar, quando necessário.
-- [ ] Implementar fluxo de autorização e estados de erro.
+- [x] Implementar observação de `MediaSession` com APIs oficiais.
+- [x] Definir tratamento para múltiplas sessões ativas.
+- [x] Adicionar `NotificationListenerService` como fonte complementar.
+- [x] Exibir estado sem mídia ativa quando a autorização ainda não permite leitura.
+- [ ] Implementar fluxo de onboarding para abrir a configuração de acesso a notificações.
 
 ## Etapa 2 — Experiência Now Playing
 
-- [ ] Exibir título, artista, aplicativo de origem e capa.
-- [ ] Exibir estado de reprodução e ausência de conteúdo.
-- [ ] Carregar capas com Coil e cache apropriado.
+- [x] Exibir título, artista, álbum, aplicativo de origem, capa, duração e posição.
+- [x] Exibir estado de reprodução e ausência de conteúdo.
+- [ ] Avaliar cache específico para capas quando houver URLs ou imagens externas estáveis.
 - [x] Criar animação fluida do disco de vinil.
 
 ## Etapa 3 — Personalização

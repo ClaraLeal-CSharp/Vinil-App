@@ -1,5 +1,6 @@
 package br.com.vinilapp.feature.nowplaying.presentation
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +24,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -31,7 +34,7 @@ import br.com.vinilapp.R
 import br.com.vinilapp.core.designsystem.component.VinylDisk
 import br.com.vinilapp.core.designsystem.theme.VinilTheme
 
-/** Interface principal mockada; ainda não há comunicação com APIs de mídia. */
+/** Interface principal alimentada pelas sessões de mídia expostas pelo Android. */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun NowPlayingScreen(uiState: NowPlayingUiState) {
@@ -41,11 +44,12 @@ fun NowPlayingScreen(uiState: NowPlayingUiState) {
     val backgrounds = VinilTheme.backgrounds
 
     val displayState = uiState.copy(
-        title = uiState.title.ifBlank { stringResource(R.string.now_playing_mock_song) },
-        artist = uiState.artist.ifBlank { stringResource(R.string.now_playing_mock_artist) },
-        source = uiState.source.ifBlank { stringResource(R.string.now_playing_mock_source) },
-        elapsedTime = uiState.elapsedTime.ifBlank { stringResource(R.string.now_playing_mock_elapsed) },
-        duration = uiState.duration.ifBlank { stringResource(R.string.now_playing_mock_duration) }
+        title = uiState.title.ifBlank { stringResource(R.string.now_playing_unavailable_title) },
+        artist = uiState.artist.ifBlank { stringResource(R.string.now_playing_unavailable_description) },
+        album = uiState.album.ifBlank { stringResource(R.string.now_playing_unknown_album) },
+        source = uiState.source.ifBlank { stringResource(R.string.now_playing_unknown_source) },
+        elapsedTime = uiState.elapsedTime.ifBlank { stringResource(R.string.now_playing_empty_time) },
+        duration = uiState.duration.ifBlank { stringResource(R.string.now_playing_empty_time) }
     )
 
     Scaffold(
@@ -80,6 +84,7 @@ fun NowPlayingScreen(uiState: NowPlayingUiState) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             VinylRecordStage(
+                uiState = displayState,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(sizes.recordAreaWeight)
@@ -103,7 +108,7 @@ fun NowPlayingScreen(uiState: NowPlayingUiState) {
 }
 
 @Composable
-private fun VinylRecordStage(modifier: Modifier = Modifier) {
+private fun VinylRecordStage(uiState: NowPlayingUiState, modifier: Modifier = Modifier) {
     val discs = VinilTheme.discs
 
     BoxWithConstraints(
@@ -114,26 +119,38 @@ private fun VinylRecordStage(modifier: Modifier = Modifier) {
 
         VinylDisk(
             modifier = Modifier.size(discSize),
-            isRotating = true
+            isRotating = uiState.isPlaying
         ) {
-            MockAlbumArtwork()
+            AlbumArtwork(uiState = uiState)
         }
     }
 }
 
 @Composable
-private fun MockAlbumArtwork(modifier: Modifier = Modifier) {
+private fun AlbumArtwork(uiState: NowPlayingUiState, modifier: Modifier = Modifier) {
     val discs = VinilTheme.discs
     val controls = VinilTheme.controls
     val artworkDescription = stringResource(R.string.now_playing_album_art_description)
+    val albumArt = uiState.albumArt
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .clip(controls.cornerShape)
-            .background(discs.artworkBackground)
-            .semantics { contentDescription = artworkDescription }
-    )
+    if (albumArt != null) {
+        Image(
+            bitmap = albumArt.asImageBitmap(),
+            contentDescription = artworkDescription,
+            contentScale = ContentScale.Crop,
+            modifier = modifier
+                .fillMaxSize()
+                .clip(controls.cornerShape)
+        )
+    } else {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .clip(controls.cornerShape)
+                .background(discs.artworkBackground)
+                .semantics { contentDescription = artworkDescription }
+        )
+    }
 }
 
 @Composable
@@ -156,6 +173,12 @@ private fun NowPlayingMetadata(uiState: NowPlayingUiState) {
         Text(
             text = uiState.artist,
             style = fonts.body,
+            color = colors.onSurfaceVariant,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = uiState.album,
+            style = fonts.caption,
             color = colors.onSurfaceVariant,
             textAlign = TextAlign.Center
         )

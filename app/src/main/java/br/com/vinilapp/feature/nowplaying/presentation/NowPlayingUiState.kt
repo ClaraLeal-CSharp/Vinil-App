@@ -1,12 +1,17 @@
 package br.com.vinilapp.feature.nowplaying.presentation
 
-/** Estado de apresentação mockado; ainda não há integração com sessões de mídia. */
+import android.graphics.Bitmap
+
+/** Estado de apresentação da reprodução atual. */
 data class NowPlayingUiState(
     val title: String = "",
     val artist: String = "",
+    val album: String = "",
     val source: String = "",
     val elapsedTime: String = "",
     val duration: String = "",
-    val progress: Float = 0.42f,
-    val isPlaying: Boolean = true
+    val progress: Float = 0f,
+    val albumArt: Bitmap? = null,
+    val isPlaying: Boolean = false,
+    val isAvailable: Boolean = false
 )
