@@ -1,6 +1,14 @@
 <resources>
     <string name="app_name">VinilApp</string>
     <string name="now_playing_title">Tocando agora</string>
-    <string name="now_playing_unavailable">Nenhuma música disponível</string>
-    <string name="now_playing_setup_description">A detecção de mídia será configurada nas próximas etapas.</string>
+    <string name="now_playing_mock_song">Noite em vinil</string>
+    <string name="now_playing_mock_artist">Marina Costa</string>
+    <string name="now_playing_mock_source">Mock local</string>
+    <string name="now_playing_mock_elapsed">1:48</string>
+    <string name="now_playing_mock_duration">4:17</string>
+    <string name="now_playing_album_art_description">Capa mockada do album</string>
+    <string name="now_playing_previous">Anterior</string>
+    <string name="now_playing_play">Play</string>
+    <string name="now_playing_pause">Pausar</string>
+    <string name="now_playing_next">Proxima</string>
 </resources>

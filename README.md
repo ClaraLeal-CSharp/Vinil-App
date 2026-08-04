@@ -2,7 +2,7 @@
 
 O VinilApp é um aplicativo Android nativo concebido como um *Now Playing Display*: ele exibirá as informações da música reproduzida por outros aplicativos. Não é um player de música. A futura integração usará exclusivamente APIs oficiais do Android, como `MediaSession` e `NotificationListenerService`.
 
-Nesta etapa, o projeto contém apenas a base técnica: estrutura de pacotes, navegação, DI, sistema de temas, qualidade de código, uma tela inicial estática e documentação. Nenhuma integração de mídia ou player foi implementado.
+Nesta etapa, o projeto contém a base técnica e a interface principal mockada: estrutura de pacotes, navegação, DI, sistema de temas, qualidade de código, tela Now Playing responsiva e documentação. Nenhuma integração de mídia ou player foi implementado.
 
 ## Tecnologias
 
@@ -63,7 +63,9 @@ A árvore completa e atualizada está em [DIRECTORY_TREE.md](docs/DIRECTORY_TREE
 - Tema padrão aplicado sobre Compose e Material 3, sem cores fixas nos componentes.
 - Navegação Compose centralizada com destino inicial de Now Playing.
 - Hilt configurado para Activity, Application, ViewModel e módulos futuros.
-- Tela inicial estática de Now Playing e ViewModel de base, sem conexão com dados externos.
+- Interface principal de Now Playing com disco, capa central, metadados mockados, barra de progresso e botões sem ação real.
+- Layout responsivo baseado em tokens de tema, com o disco ocupando a área visual dominante da tela.
+- ViewModel de base sem conexão com dados externos.
 - Contratos de dados, domínio e serviço criados sem acesso às APIs Android.
 - Lint Android e ktlint configurados.
 - Configuração de extensões recomendadas para VS Code.
@@ -72,7 +74,7 @@ A árvore completa e atualizada está em [DIRECTORY_TREE.md](docs/DIRECTORY_TREE
 
 - Detecção de sessões de mídia com `MediaSession`.
 - Leitura opcional de notificações através de `NotificationListenerService`.
-- Exibição de capa, título, artista e estado da reprodução.
+- Substituição dos dados mockados por capa, título, artista e estado de reprodução vindos das APIs oficiais.
 - Personalização visual, animação do disco e preferências persistentes.
 
 O planejamento completo está em [ROADMAP.md](docs/ROADMAP.md), e o histórico relevante em [CHANGELOG.md](docs/CHANGELOG.md).

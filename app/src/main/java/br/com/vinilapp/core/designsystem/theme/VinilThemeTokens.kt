@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 
 @Immutable
 data class VinilThemeTokens(
@@ -48,17 +49,28 @@ data class VinilColors(
 data class VinilFonts(
     val default: FontFamily,
     val title: TextStyle,
-    val body: TextStyle
+    val headline: TextStyle,
+    val body: TextStyle,
+    val caption: TextStyle,
+    val control: TextStyle
 )
 
 @Immutable
 data class VinilSizes(
     val screenPadding: Dp,
     val contentSpacing: Dp,
+    val compactSpacing: Dp,
     val appBarTitleInset: Dp,
     val controlCornerRadius: Dp,
+    val controlsSpacing: Dp,
     val discMinSize: Dp,
-    val discMaxSize: Dp
+    val discMaxSize: Dp,
+    val progressHeight: Dp,
+    val progressThumbSize: Dp,
+    val recordAreaWeight: Float,
+    val controlsAreaWeight: Float,
+    val secondaryControlWeight: Float,
+    val primaryControlWeight: Float
 )
 
 @Immutable
@@ -74,7 +86,15 @@ data class VinilDiscs(
     val maxSize: Dp,
     val baseColor: Color,
     val grooveColor: Color,
-    val labelColor: Color
+    val grooveStrokeWidth: Dp,
+    val grooveAlpha: Float,
+    val labelColor: Color,
+    val centerHoleColor: Color,
+    val artworkBackground: Brush,
+    val artworkSizeFraction: Float,
+    val labelSizeFraction: Float,
+    val centerHoleSizeFraction: Float,
+    val grooveCount: Int
 )
 
 @Immutable
@@ -87,10 +107,17 @@ data class VinilBackgrounds(
 data class VinilControls(
     val containerColor: Color,
     val contentColor: Color,
+    val secondaryContainerColor: Color,
+    val secondaryContentColor: Color,
     val disabledContainerColor: Color,
     val disabledContentColor: Color,
     val cornerShape: RoundedCornerShape,
-    val minTouchTarget: Dp
+    val minTouchTarget: Dp,
+    val primaryTouchTarget: Dp,
+    val progressTrackColor: Color,
+    val progressActiveTrackColor: Color,
+    val progressThumbColor: Color,
+    val iconFontSize: TextUnit
 )
 
 internal fun defaultContentPlacementSpec(): AnimationSpec<Dp> = spring(stiffness = Spring.StiffnessMediumLow)

@@ -20,7 +20,7 @@ Centraliza a composição da aplicação. `VinilApplication` inicializa Hilt, `M
 
 ### `feature`
 
-Agrupa cada recurso por contexto. Hoje contém `nowplaying/presentation`, com rota, tela, estado de UI e `ViewModel`. As telas consomem estados expostos pelo ViewModel e não conhecem APIs Android de mídia.
+Agrupa cada recurso por contexto. Hoje contém `nowplaying/presentation`, com rota, tela principal mockada, estado de UI e `ViewModel`. A interface exibe disco, capa central, metadados falsos, progresso e controles visuais, mas os botões não executam reprodução e a tela não conhece APIs Android de mídia.
 
 ### `domain`
 
@@ -42,6 +42,8 @@ Contém o marcador para o futuro listener de notificações. Ele não estende `N
 
 Reúne componentes transversais. O design system expõe `VinilTheme`, um contrato visual próprio baseado em tokens e desacoplado das features. O tema padrão cobre cores, fontes, tamanhos, animações, discos, fundos e controles; componentes de tela devem consumir esses tokens em vez de declarar cores, medidas ou estilos locais.
 
+A interface principal usa esses tokens para desenhar o disco, a capa mockada, a barra de progresso e os botões. Assim, a futura personalização de temas pode alterar aparência e proporções sem reescrever a feature.
+
 O Material 3 permanece como biblioteca de componentes, mas recebe `ColorScheme`, `Typography` e `Shapes` derivados do tema do VinilApp. Assim, futuros temas podem trocar aparência sem alterar as telas.
 
 ## Fluxo de dados planejado
@@ -61,4 +63,4 @@ O Material 3 permanece como biblioteca de componentes, mas recebe `ColorScheme`,
 - Android Lint e ktlint protegem a consistência técnica e de estilo.
 - Strings de interface ficam em recursos Android para permitir localização.
 - Estilos visuais entram pelo `VinilTheme`; features não devem manter cores fixas ou dimensões próprias.
-- Não há serviço, listener, permissão especial ou leitura de dados nesta etapa.
+- A interface principal usa dados mockados e controles sem ação; não há player, serviço, listener, permissão especial ou leitura de dados nesta etapa.

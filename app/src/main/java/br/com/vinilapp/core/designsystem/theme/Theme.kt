@@ -145,10 +145,31 @@ private fun defaultFonts(colors: VinilColors): VinilFonts = VinilFonts(
         fontSize = 24.sp,
         lineHeight = 30.sp
     ),
+    headline = DefaultTypography.headlineMedium.copy(
+        color = colors.onBackground,
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 30.sp,
+        lineHeight = 36.sp
+    ),
     body = DefaultTypography.bodyLarge.copy(
         color = colors.onSurfaceVariant,
         fontFamily = FontFamily.Default,
         fontSize = 16.sp,
+        lineHeight = 24.sp
+    ),
+    caption = DefaultTypography.labelLarge.copy(
+        color = colors.onSurfaceVariant,
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Medium,
+        fontSize = 14.sp,
+        lineHeight = 20.sp
+    ),
+    control = DefaultTypography.titleMedium.copy(
+        color = colors.onPrimary,
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 18.sp,
         lineHeight = 24.sp
     )
 )
@@ -156,18 +177,36 @@ private fun defaultFonts(colors: VinilColors): VinilFonts = VinilFonts(
 private fun defaultSizes(): VinilSizes = VinilSizes(
     screenPadding = 24.dp,
     contentSpacing = 16.dp,
+    compactSpacing = 8.dp,
     appBarTitleInset = 0.dp,
     controlCornerRadius = 8.dp,
+    controlsSpacing = 12.dp,
     discMinSize = 160.dp,
-    discMaxSize = 320.dp
+    discMaxSize = 560.dp,
+    progressHeight = 8.dp,
+    progressThumbSize = 14.dp,
+    recordAreaWeight = 2f,
+    controlsAreaWeight = 1f,
+    secondaryControlWeight = 1f,
+    primaryControlWeight = 1.2f
 )
 
 private fun defaultDiscs(colors: VinilColors): VinilDiscs = VinilDiscs(
     minSize = 160.dp,
-    maxSize = 320.dp,
+    maxSize = 560.dp,
     baseColor = colors.onBackground,
     grooveColor = colors.outline,
-    labelColor = colors.primary
+    grooveStrokeWidth = 1.dp,
+    grooveAlpha = 0.34f,
+    labelColor = colors.primary,
+    centerHoleColor = colors.background,
+    artworkBackground = Brush.verticalGradient(
+        colors = listOf(colors.secondary, colors.primary)
+    ),
+    artworkSizeFraction = 0.42f,
+    labelSizeFraction = 0.58f,
+    centerHoleSizeFraction = 0.08f,
+    grooveCount = 8
 )
 
 private fun defaultBackgrounds(colors: VinilColors): VinilBackgrounds = VinilBackgrounds(
@@ -182,10 +221,17 @@ private fun defaultBackgrounds(colors: VinilColors): VinilBackgrounds = VinilBac
 private fun defaultControls(colors: VinilColors): VinilControls = VinilControls(
     containerColor = colors.primary,
     contentColor = colors.onPrimary,
+    secondaryContainerColor = colors.surfaceVariant,
+    secondaryContentColor = colors.onSurfaceVariant,
     disabledContainerColor = colors.surfaceVariant,
     disabledContentColor = colors.onSurfaceVariant,
     cornerShape = RoundedCornerShape(8.dp),
-    minTouchTarget = 48.dp
+    minTouchTarget = 48.dp,
+    primaryTouchTarget = 64.dp,
+    progressTrackColor = colors.surfaceVariant,
+    progressActiveTrackColor = colors.primary,
+    progressThumbColor = colors.primary,
+    iconFontSize = 22.sp
 )
 
 private fun defaultMaterialColorScheme(colors: VinilColors, isDark: Boolean) = if (isDark) {

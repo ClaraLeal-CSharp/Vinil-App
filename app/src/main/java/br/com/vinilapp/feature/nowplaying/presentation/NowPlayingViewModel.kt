@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 /** ViewModel inicial que delimita a camada de apresentação do recurso. */
 @HiltViewModel
 class NowPlayingViewModel @Inject constructor() : ViewModel() {
-    private val mutableUiState = MutableStateFlow(NowPlayingUiState)
+    private val mutableUiState = MutableStateFlow(NowPlayingUiState())
 
     val uiState: StateFlow<NowPlayingUiState> = mutableUiState.asStateFlow()
 }

@@ -7,6 +7,13 @@
 - [x] Preparar MVVM, Navigation Compose, Hilt, catálogo de versões e temas.
 - [x] Configurar Android Lint, ktlint, `.editorconfig`, `.gitignore`, documentação e suporte a VS Code.
 
+## Etapa 0.5 — Interface principal mockada (concluída)
+
+- [x] Criar layout principal responsivo de Now Playing.
+- [x] Exibir disco em destaque, capa central, metadados falsos, progresso e botões.
+- [x] Manter a tela sem player, sem `MediaSession` e sem leitura de dados externos.
+- [x] Consumir estilos visuais através do sistema de temas.
+
 ## Etapa 1 — Fonte de dados de mídia
 
 - [ ] Implementar observação de `MediaSession` com APIs oficiais.
