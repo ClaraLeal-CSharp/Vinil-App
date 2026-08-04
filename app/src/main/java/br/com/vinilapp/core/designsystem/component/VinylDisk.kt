@@ -1,17 +1,16 @@
 package br.com.vinilapp.core.designsystem.component
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,25 +26,37 @@ import androidx.compose.ui.unit.dp
 import br.com.vinilapp.core.designsystem.theme.VinilTheme
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlinx.coroutines.isActive
 
 @Composable
 fun VinylDisk(modifier: Modifier = Modifier, isRotating: Boolean = true, albumArtwork: @Composable () -> Unit) {
     val discs = VinilTheme.discs
     val animations = VinilTheme.animations
-    val infiniteTransition = rememberInfiniteTransition(label = "vinyl_disk_rotation")
-    val animatedRotation by infiniteTransition.animateFloat(
-        initialValue = ROTATION_START,
-        targetValue = ROTATION_END,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = animations.discRotationDurationMillis,
-                easing = LinearEasing
-            ),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "vinyl_disk_angle"
-    )
-    val rotation = if (isRotating) animatedRotation else ROTATION_START
+    val rotation = remember { Animatable(ROTATION_START) }
+
+    LaunchedEffect(isRotating, animations.discRotationDurationMillis) {
+        if (isRotating) {
+            while (isActive) {
+                rotation.animateTo(
+                    targetValue = rotation.value + ROTATION_END,
+                    animationSpec = tween(
+                        durationMillis = animations.discRotationDurationMillis,
+                        easing = LinearEasing
+                    )
+                )
+                rotation.snapTo(rotation.value % ROTATION_END)
+            }
+        } else {
+            rotation.animateTo(
+                targetValue = rotation.value + PAUSE_COAST_DEGREES,
+                animationSpec = tween(
+                    durationMillis = PAUSE_SLOWDOWN_DURATION_MILLIS,
+                    easing = FastOutSlowInEasing
+                )
+            )
+            rotation.snapTo(rotation.value % ROTATION_END)
+        }
+    }
 
     Box(
         modifier = modifier
@@ -57,7 +68,7 @@ fun VinylDisk(modifier: Modifier = Modifier, isRotating: Boolean = true, albumAr
             )
             .clip(CircleShape)
             .graphicsLayer {
-                rotationZ = rotation
+                rotationZ = rotation.value
             },
         contentAlignment = Alignment.Center
     ) {
@@ -190,6 +201,8 @@ fun VinylDisk(modifier: Modifier = Modifier, isRotating: Boolean = true, albumAr
 
 private const val ROTATION_START = 0f
 private const val ROTATION_END = 360f
+private const val PAUSE_COAST_DEGREES = 54f
+private const val PAUSE_SLOWDOWN_DURATION_MILLIS = 850
 private const val RADIUS_DIVISOR = 2f
 private const val MIN_GROOVE_COUNT = 1
 private const val SHADOW_AMBIENT_ALPHA = 0.34f

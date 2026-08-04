@@ -1,5 +1,9 @@
 package br.com.vinilapp.feature.nowplaying.presentation
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -131,25 +136,30 @@ private fun AlbumArtwork(uiState: NowPlayingUiState, modifier: Modifier = Modifi
     val discs = VinilTheme.discs
     val controls = VinilTheme.controls
     val artworkDescription = stringResource(R.string.now_playing_album_art_description)
-    val albumArt = uiState.albumArt
 
-    if (albumArt != null) {
-        Image(
-            bitmap = albumArt.asImageBitmap(),
-            contentDescription = artworkDescription,
-            contentScale = ContentScale.Crop,
-            modifier = modifier
-                .fillMaxSize()
-                .clip(controls.cornerShape)
-        )
-    } else {
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .clip(controls.cornerShape)
-                .background(discs.artworkBackground)
-                .semantics { contentDescription = artworkDescription }
-        )
+    Crossfade(
+        targetState = uiState.albumArt,
+        animationSpec = tween(durationMillis = ARTWORK_TRANSITION_DURATION_MILLIS),
+        label = "album_art_transition",
+        modifier = modifier
+            .fillMaxSize()
+            .clip(controls.cornerShape)
+    ) { albumArt ->
+        if (albumArt != null) {
+            Image(
+                bitmap = albumArt.asImageBitmap(),
+                contentDescription = artworkDescription,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(discs.artworkBackground)
+                    .semantics { contentDescription = artworkDescription }
+            )
+        }
     }
 }
 
@@ -159,35 +169,43 @@ private fun NowPlayingMetadata(uiState: NowPlayingUiState) {
     val colors = VinilTheme.colors
     val sizes = VinilTheme.sizes
 
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(sizes.compactSpacing),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = uiState.title,
-            style = fonts.headline,
-            color = colors.onBackground,
-            textAlign = TextAlign.Center
-        )
-        Text(
-            text = uiState.artist,
-            style = fonts.body,
-            color = colors.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
-        Text(
-            text = uiState.album,
-            style = fonts.caption,
-            color = colors.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
-        Text(
-            text = uiState.source,
-            style = fonts.caption,
-            color = colors.secondary,
-            textAlign = TextAlign.Center
-        )
+    Crossfade(
+        targetState = uiState.metadata,
+        animationSpec = tween(durationMillis = METADATA_TRANSITION_DURATION_MILLIS),
+        label = "now_playing_metadata_transition"
+    ) { metadata ->
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .animateContentSize(),
+            verticalArrangement = Arrangement.spacedBy(sizes.compactSpacing),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = metadata.title,
+                style = fonts.headline,
+                color = colors.onBackground,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = metadata.artist,
+                style = fonts.body,
+                color = colors.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = metadata.album,
+                style = fonts.caption,
+                color = colors.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = metadata.source,
+                style = fonts.caption,
+                color = colors.secondary,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
 
@@ -197,6 +215,11 @@ private fun PlaybackProgress(uiState: NowPlayingUiState) {
     val fonts = VinilTheme.fonts
     val colors = VinilTheme.colors
     val sizes = VinilTheme.sizes
+    val animatedProgress by animateFloatAsState(
+        targetValue = uiState.progress.coerceIn(PROGRESS_START, PROGRESS_END),
+        animationSpec = tween(durationMillis = PROGRESS_TRANSITION_DURATION_MILLIS),
+        label = "playback_progress"
+    )
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -211,7 +234,7 @@ private fun PlaybackProgress(uiState: NowPlayingUiState) {
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth(uiState.progress.coerceIn(PROGRESS_START, PROGRESS_END))
+                    .fillMaxWidth(animatedProgress)
                     .fillMaxHeight()
                     .background(controls.progressActiveTrackColor)
             )
@@ -302,6 +325,24 @@ private fun PlaybackButton(label: String, isPrimary: Boolean, modifier: Modifier
     }
 }
 
+private val NowPlayingUiState.metadata: NowPlayingMetadataState
+    get() = NowPlayingMetadataState(
+        title = title,
+        artist = artist,
+        album = album,
+        source = source
+    )
+
+private data class NowPlayingMetadataState(
+    val title: String,
+    val artist: String,
+    val album: String,
+    val source: String
+)
+
 private const val PROGRESS_START = 0f
 private const val PROGRESS_END = 1f
 private const val CONTROL_LABEL_MAX_LINES = 1
+private const val ARTWORK_TRANSITION_DURATION_MILLIS = 420
+private const val METADATA_TRANSITION_DURATION_MILLIS = 260
+private const val PROGRESS_TRANSITION_DURATION_MILLIS = 650

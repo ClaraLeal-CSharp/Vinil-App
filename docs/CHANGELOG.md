@@ -24,3 +24,5 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo.
 - Detecção de título, artista, álbum, duração, posição, capa e aplicativo responsável a partir de sessões de mídia compatíveis.
 - Fallback por notificação de transporte quando o player não entrega uma sessão mapeável.
 - Estado visual sem mídia ativa no lugar dos dados mockados.
+- Interface ligada aos dados reais com transições suaves de capa, metadados e progresso.
+- Rotação do disco sincronizada com o estado de reprodução, incluindo desaceleração suave ao pausar.

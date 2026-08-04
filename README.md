@@ -73,11 +73,12 @@ A árvore completa e atualizada está em [DIRECTORY_TREE.md](docs/DIRECTORY_TREE
 - Tema padrão aplicado sobre Compose e Material 3, sem cores fixas nos componentes.
 - Navegação Compose centralizada com destino inicial de Now Playing.
 - Hilt configurado para Activity, Application, ViewModel e módulos futuros.
-- Interface principal de Now Playing com disco, capa central, metadados reais quando disponíveis, barra de progresso e botões sem ação real.
+- Interface principal de Now Playing conectada aos dados reais quando disponíveis, com disco, capa central, metadados, barra de progresso e botões sem ação real.
 - Layout responsivo baseado em tokens de tema, com o disco ocupando a área visual dominante da tela.
 - ViewModel conectado ao caso de uso de reprodução atual.
 - Leitura automática de título, artista, álbum, duração, posição, capa, pacote e nome do aplicativo responsável.
 - Priorização de sessões em reprodução e fallback por notificação de transporte quando não houver uma sessão mapeável.
+- Animações suaves para reprodução: o disco gira ao tocar, desacelera ao pausar e capa, metadados e progresso transitam quando a música muda.
 - Lint Android e ktlint configurados.
 - Configuração de extensões recomendadas para VS Code.
 

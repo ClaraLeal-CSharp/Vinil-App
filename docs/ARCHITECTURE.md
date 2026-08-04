@@ -42,9 +42,9 @@ Contém `NowPlayingNotificationListenerService`, declarado no manifest com `andr
 
 Reúne componentes transversais. O design system expõe `VinilTheme`, um contrato visual próprio baseado em tokens e desacoplado das features. O tema padrão cobre cores, fontes, tamanhos, animações, discos, fundos e controles; componentes de tela devem consumir esses tokens em vez de declarar cores, medidas ou estilos locais.
 
-O pacote `core/designsystem/component` contém componentes visuais reutilizáveis. `VinylDisk` desenha o disco exclusivamente com Canvas do Jetpack Compose, incluindo ranhuras, iluminação, profundidade, sombra, textura e furo central. A capa do álbum entra como slot Compose centralizado e o componente aplica rotação contínua por tokens de animação.
+O pacote `core/designsystem/component` contém componentes visuais reutilizáveis. `VinylDisk` desenha o disco exclusivamente com Canvas do Jetpack Compose, incluindo ranhuras, iluminação, profundidade, sombra, textura e furo central. A capa do álbum entra como slot Compose centralizado e o componente aplica rotação contínua por tokens de animação enquanto há reprodução, mantendo o ângulo atual e desacelerando suavemente quando a mídia pausa.
 
-A interface principal usa esses tokens para desenhar o disco, a capa mockada, a barra de progresso e os botões. Assim, a futura personalização de temas pode alterar aparência, movimento e proporções sem reescrever a feature.
+A interface principal usa esses tokens para desenhar o disco, a capa real quando disponível, a barra de progresso e os botões. Trocas de capa, metadados e progresso são animadas com APIs nativas do Compose para manter a transição fluida sem bloquear a interface. Assim, a futura personalização de temas pode alterar aparência, movimento e proporções sem reescrever a feature.
 
 O Material 3 permanece como biblioteca de componentes, mas recebe `ColorScheme`, `Typography` e `Shapes` derivados do tema do VinilApp. Assim, futuros temas podem trocar aparência sem alterar as telas.
 
@@ -69,4 +69,4 @@ O `NotificationListenerService` complementa esse fluxo enviando tokens e snapsho
 - Estilos visuais entram pelo `VinilTheme`; features não devem manter cores fixas ou dimensões próprias.
 - A integração depende da permissão manual de acesso a notificações; sem ela, o Android não permite consultar sessões de outros apps.
 - O app não usa APIs experimentais nem implementa player próprio.
-- A interface principal usa dados reais quando disponíveis e controles sem ação; comandos de reprodução ficam para etapa futura.
+- A interface principal usa dados reais quando disponíveis, anima mudanças de mídia e mantém controles sem ação; comandos de reprodução ficam para etapa futura.
