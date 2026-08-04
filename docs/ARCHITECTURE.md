@@ -42,7 +42,9 @@ Contém o marcador para o futuro listener de notificações. Ele não estende `N
 
 Reúne componentes transversais. O design system expõe `VinilTheme`, um contrato visual próprio baseado em tokens e desacoplado das features. O tema padrão cobre cores, fontes, tamanhos, animações, discos, fundos e controles; componentes de tela devem consumir esses tokens em vez de declarar cores, medidas ou estilos locais.
 
-A interface principal usa esses tokens para desenhar o disco, a capa mockada, a barra de progresso e os botões. Assim, a futura personalização de temas pode alterar aparência e proporções sem reescrever a feature.
+O pacote `core/designsystem/component` contém componentes visuais reutilizáveis. `VinylDisk` desenha o disco exclusivamente com Canvas do Jetpack Compose, incluindo ranhuras, iluminação, profundidade, sombra, textura e furo central. A capa do álbum entra como slot Compose centralizado e o componente aplica rotação contínua por tokens de animação.
+
+A interface principal usa esses tokens para desenhar o disco, a capa mockada, a barra de progresso e os botões. Assim, a futura personalização de temas pode alterar aparência, movimento e proporções sem reescrever a feature.
 
 O Material 3 permanece como biblioteca de componentes, mas recebe `ColorScheme`, `Typography` e `Shapes` derivados do tema do VinilApp. Assim, futuros temas podem trocar aparência sem alterar as telas.
 
@@ -63,4 +65,4 @@ O Material 3 permanece como biblioteca de componentes, mas recebe `ColorScheme`,
 - Android Lint e ktlint protegem a consistência técnica e de estilo.
 - Strings de interface ficam em recursos Android para permitir localização.
 - Estilos visuais entram pelo `VinilTheme`; features não devem manter cores fixas ou dimensões próprias.
-- A interface principal usa dados mockados e controles sem ação; não há player, serviço, listener, permissão especial ou leitura de dados nesta etapa.
+- A interface principal usa dados mockados e controles sem ação; não há player, serviço, listener, permissão especial, `MediaSession` ativa ou leitura de dados nesta etapa.

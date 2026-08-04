@@ -1,6 +1,5 @@
 package br.com.vinilapp.feature.nowplaying.presentation
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,12 +23,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import br.com.vinilapp.R
+import br.com.vinilapp.core.designsystem.component.VinylDisk
 import br.com.vinilapp.core.designsystem.theme.VinilTheme
 
 /** Interface principal mockada; ainda não há comunicação com APIs de mídia. */
@@ -113,45 +112,28 @@ private fun VinylRecordStage(modifier: Modifier = Modifier) {
     ) {
         val discSize = minOf(maxWidth, maxHeight, discs.maxSize)
 
-        VinylRecord(
-            modifier = Modifier.size(discSize)
-        )
+        VinylDisk(
+            modifier = Modifier.size(discSize),
+            isRotating = true
+        ) {
+            MockAlbumArtwork()
+        }
     }
 }
 
 @Composable
-private fun VinylRecord(modifier: Modifier = Modifier) {
+private fun MockAlbumArtwork(modifier: Modifier = Modifier) {
     val discs = VinilTheme.discs
     val controls = VinilTheme.controls
     val artworkDescription = stringResource(R.string.now_playing_album_art_description)
 
     Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
-    ) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val radius = size.minDimension / RADIUS_DIVISOR
-            val grooveStep = radius / (discs.grooveCount + GROOVE_OUTER_INSET)
-
-            drawCircle(color = discs.baseColor)
-            repeat(discs.grooveCount) { index ->
-                drawCircle(
-                    color = discs.grooveColor.copy(alpha = discs.grooveAlpha),
-                    radius = grooveStep * (index + GROOVE_INNER_INSET),
-                    style = Stroke(width = discs.grooveStrokeWidth.toPx())
-                )
-            }
-            drawCircle(color = discs.labelColor, radius = radius * discs.labelSizeFraction)
-            drawCircle(color = discs.centerHoleColor, radius = radius * discs.centerHoleSizeFraction)
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxSize(discs.artworkSizeFraction)
-                .clip(controls.cornerShape)
-                .background(discs.artworkBackground)
-                .semantics { contentDescription = artworkDescription }
-        )
-    }
+        modifier = modifier
+            .fillMaxSize()
+            .clip(controls.cornerShape)
+            .background(discs.artworkBackground)
+            .semantics { contentDescription = artworkDescription }
+    )
 }
 
 @Composable
@@ -297,9 +279,6 @@ private fun PlaybackButton(label: String, isPrimary: Boolean, modifier: Modifier
     }
 }
 
-private const val RADIUS_DIVISOR = 2f
-private const val GROOVE_OUTER_INSET = 2
-private const val GROOVE_INNER_INSET = 2
 private const val PROGRESS_START = 0f
 private const val PROGRESS_END = 1f
 private const val CONTROL_LABEL_MAX_LINES = 1

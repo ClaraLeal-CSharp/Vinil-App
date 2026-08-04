@@ -26,7 +26,7 @@
 - [ ] Exibir título, artista, aplicativo de origem e capa.
 - [ ] Exibir estado de reprodução e ausência de conteúdo.
 - [ ] Carregar capas com Coil e cache apropriado.
-- [ ] Criar animação fluida do disco de vinil.
+- [x] Criar animação fluida do disco de vinil.
 
 ## Etapa 3 — Personalização
 

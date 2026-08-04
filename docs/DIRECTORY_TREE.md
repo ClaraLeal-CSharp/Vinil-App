@@ -20,6 +20,8 @@ VinilApp/
 │       │   │       ├── AppDestination.kt
 │       │   │       └── VinilNavHost.kt
 │       │   ├── core/designsystem/
+│       │   │   ├── component/
+│       │   │   │   └── VinylDisk.kt
 │       │   │   └── theme/
 │       │   │       ├── Theme.kt
 │       │   │       └── VinilThemeTokens.kt
@@ -59,4 +61,4 @@ VinilApp/
 └── settings.gradle.kts
 ```
 
-Os contratos e marcadores de `data` e `service` não acessam APIs Android nesta etapa. Eles existem para estabilizar as fronteiras entre as camadas antes da implementação da detecção de mídia. O design system centraliza os tokens visuais no tema; telas e componentes não devem definir cores ou estilos fixos. A tela `NowPlayingScreen` já contém a interface principal responsiva com dados mockados, mas não implementa player nem comunicação com `MediaSession`.
+Os contratos e marcadores de `data` e `service` não acessam APIs Android nesta etapa. Eles existem para estabilizar as fronteiras entre as camadas antes da implementação da detecção de mídia. O design system centraliza os tokens visuais no tema; telas e componentes não devem definir cores ou estilos fixos. `VinylDisk` concentra o desenho do disco em Canvas e a animação de rotação contínua. A tela `NowPlayingScreen` já contém a interface principal responsiva com dados mockados, mas não implementa player nem comunicação com `MediaSession`.
