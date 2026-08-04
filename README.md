@@ -46,7 +46,7 @@ O Android exige autorização manual para que um app leia notificações e consu
 Configurações do Android → Notificações → Acesso a notificações → VinilApp
 ```
 
-O caminho pode variar por fabricante. Sem essa permissão, a tela permanece em estado sem mídia ativa.
+O caminho pode variar por fabricante. Sem essa permissão, a tela mostra um aviso de acesso necessário e um botão para abrir essa configuração.
 
 ## Arquitetura
 
@@ -78,6 +78,7 @@ A árvore completa e atualizada está em [DIRECTORY_TREE.md](docs/DIRECTORY_TREE
 - ViewModel conectado ao caso de uso de reprodução atual.
 - Leitura automática de título, artista, álbum, duração, posição, capa, pacote e nome do aplicativo responsável.
 - Priorização de sessões em reprodução e fallback por notificação de transporte quando não houver uma sessão mapeável.
+- Estado específico para acesso a notificações não concedido, com atalho para as configurações do Android.
 - Animações suaves para reprodução: o disco gira ao tocar, desacelera ao pausar e capa, metadados e progresso transitam quando a música muda.
 - Lint Android e ktlint configurados.
 - Configuração de extensões recomendadas para VS Code.

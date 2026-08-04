@@ -26,3 +26,5 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo.
 - Estado visual sem mídia ativa no lugar dos dados mockados.
 - Interface ligada aos dados reais com transições suaves de capa, metadados e progresso.
 - Rotação do disco sincronizada com o estado de reprodução, incluindo desaceleração suave ao pausar.
+- Estado explícito para acesso a notificações pendente, com botão para abrir a configuração do Android.
+- Observação de callbacks de `MediaController` para atualizar metadados e reprodução quando o player muda.

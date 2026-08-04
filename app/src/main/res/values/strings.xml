@@ -3,6 +3,8 @@
     <string name="now_playing_title">Tocando agora</string>
     <string name="now_playing_unavailable_title">Nenhuma mídia ativa</string>
     <string name="now_playing_unavailable_description">Permita o acesso a notificações e reproduza áudio em um player compatível.</string>
+    <string name="now_playing_notification_access_required">O Android bloqueou a leitura da música atual. Ative o acesso a notificações para o VinilApp.</string>
+    <string name="now_playing_open_notification_access">Abrir acesso a notificações</string>
     <string name="now_playing_unknown_album">Álbum desconhecido</string>
     <string name="now_playing_unknown_source">Origem desconhecida</string>
     <string name="now_playing_empty_time">0:00</string>

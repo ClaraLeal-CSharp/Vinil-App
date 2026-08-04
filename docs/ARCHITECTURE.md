@@ -24,7 +24,7 @@ Agrupa cada recurso por contexto. Hoje contém `nowplaying/presentation`, com ro
 
 ### `domain`
 
-Contém regras e contratos independentes da implementação concreta. `NowPlayingRepository` é consumido pelo caso de uso e pelo ViewModel. `NowPlayingState` representa o estado atual, com variação indisponível ou metadados detectados.
+Contém regras e contratos independentes da implementação concreta. `NowPlayingRepository` é consumido pelo caso de uso e pelo ViewModel. `NowPlayingState` representa o estado atual, com variação para permissão necessária, mídia indisponível ou metadados detectados.
 
 ### `data`
 
@@ -50,7 +50,7 @@ O Material 3 permanece como biblioteca de componentes, mas recebe `ColorScheme`,
 
 ## Fluxo de dados planejado
 
-1. `AndroidMediaSessionDataSource` observa sessões ativas via `MediaSessionManager`.
+1. `AndroidMediaSessionDataSource` verifica se o app tem acesso a notificações e observa sessões ativas via `MediaSessionManager`.
 2. Um repositório em `data` transforma o resultado em `NowPlayingState`.
 3. O contrato em `domain` expõe um `Flow`.
 4. O ViewModel converte o estado de domínio em estado de apresentação.
@@ -67,6 +67,6 @@ O `NotificationListenerService` complementa esse fluxo enviando tokens e snapsho
 - Android Lint e ktlint protegem a consistência técnica e de estilo.
 - Strings de interface ficam em recursos Android para permitir localização.
 - Estilos visuais entram pelo `VinilTheme`; features não devem manter cores fixas ou dimensões próprias.
-- A integração depende da permissão manual de acesso a notificações; sem ela, o Android não permite consultar sessões de outros apps.
+- A integração depende da permissão manual de acesso a notificações; sem ela, o Android não permite consultar sessões de outros apps e a interface mostra uma ação para abrir essa configuração.
 - O app não usa APIs experimentais nem implementa player próprio.
 - A interface principal usa dados reais quando disponíveis, anima mudanças de mídia e mantém controles sem ação; comandos de reprodução ficam para etapa futura.

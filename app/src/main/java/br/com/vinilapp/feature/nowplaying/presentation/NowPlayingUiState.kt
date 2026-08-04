@@ -13,5 +13,6 @@ data class NowPlayingUiState(
     val progress: Float = 0f,
     val albumArt: Bitmap? = null,
     val isPlaying: Boolean = false,
-    val isAvailable: Boolean = false
+    val isAvailable: Boolean = false,
+    val needsNotificationAccess: Boolean = false
 )

@@ -42,7 +42,7 @@ import br.com.vinilapp.core.designsystem.theme.VinilTheme
 /** Interface principal alimentada pelas sessões de mídia expostas pelo Android. */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun NowPlayingScreen(uiState: NowPlayingUiState) {
+fun NowPlayingScreen(uiState: NowPlayingUiState, onOpenNotificationAccessSettings: () -> Unit = {}) {
     val colors = VinilTheme.colors
     val fonts = VinilTheme.fonts
     val sizes = VinilTheme.sizes
@@ -50,7 +50,15 @@ fun NowPlayingScreen(uiState: NowPlayingUiState) {
 
     val displayState = uiState.copy(
         title = uiState.title.ifBlank { stringResource(R.string.now_playing_unavailable_title) },
-        artist = uiState.artist.ifBlank { stringResource(R.string.now_playing_unavailable_description) },
+        artist = uiState.artist.ifBlank {
+            stringResource(
+                if (uiState.needsNotificationAccess) {
+                    R.string.now_playing_notification_access_required
+                } else {
+                    R.string.now_playing_unavailable_description
+                }
+            )
+        },
         album = uiState.album.ifBlank { stringResource(R.string.now_playing_unknown_album) },
         source = uiState.source.ifBlank { stringResource(R.string.now_playing_unknown_source) },
         elapsedTime = uiState.elapsedTime.ifBlank { stringResource(R.string.now_playing_empty_time) },
@@ -106,7 +114,11 @@ fun NowPlayingScreen(uiState: NowPlayingUiState) {
             ) {
                 NowPlayingMetadata(uiState = displayState)
                 PlaybackProgress(uiState = displayState)
-                PlaybackControls(isPlaying = displayState.isPlaying)
+                if (displayState.needsNotificationAccess) {
+                    NotificationAccessAction(onClick = onOpenNotificationAccessSettings)
+                } else {
+                    PlaybackControls(isPlaying = displayState.isPlaying)
+                }
             }
         }
     }
@@ -258,6 +270,16 @@ private fun PlaybackProgress(uiState: NowPlayingUiState) {
 }
 
 @Composable
+private fun NotificationAccessAction(onClick: () -> Unit) {
+    PlaybackButton(
+        modifier = Modifier.fillMaxWidth(),
+        label = stringResource(R.string.now_playing_open_notification_access),
+        isPrimary = true,
+        onClick = onClick
+    )
+}
+
+@Composable
 private fun PlaybackControls(isPlaying: Boolean) {
     val sizes = VinilTheme.sizes
 
@@ -272,7 +294,8 @@ private fun PlaybackControls(isPlaying: Boolean) {
         PlaybackButton(
             modifier = Modifier.weight(sizes.secondaryControlWeight),
             label = stringResource(R.string.now_playing_previous),
-            isPrimary = false
+            isPrimary = false,
+            onClick = {}
         )
         PlaybackButton(
             modifier = Modifier
@@ -284,18 +307,20 @@ private fun PlaybackControls(isPlaying: Boolean) {
                     R.string.now_playing_play
                 }
             ),
-            isPrimary = true
+            isPrimary = true,
+            onClick = {}
         )
         PlaybackButton(
             modifier = Modifier.weight(sizes.secondaryControlWeight),
             label = stringResource(R.string.now_playing_next),
-            isPrimary = false
+            isPrimary = false,
+            onClick = {}
         )
     }
 }
 
 @Composable
-private fun PlaybackButton(label: String, isPrimary: Boolean, modifier: Modifier = Modifier) {
+private fun PlaybackButton(label: String, isPrimary: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val controls = VinilTheme.controls
     val fonts = VinilTheme.fonts
 
@@ -307,7 +332,7 @@ private fun PlaybackButton(label: String, isPrimary: Boolean, modifier: Modifier
                 controls.minTouchTarget
             }
         ),
-        onClick = {},
+        onClick = onClick,
         shape = controls.cornerShape,
         colors = ButtonDefaults.buttonColors(
             containerColor = if (isPrimary) controls.containerColor else controls.secondaryContainerColor,

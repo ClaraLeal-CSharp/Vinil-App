@@ -20,7 +20,7 @@
 - [x] Definir tratamento para múltiplas sessões ativas.
 - [x] Adicionar `NotificationListenerService` como fonte complementar.
 - [x] Exibir estado sem mídia ativa quando a autorização ainda não permite leitura.
-- [ ] Implementar fluxo de onboarding para abrir a configuração de acesso a notificações.
+- [x] Implementar fluxo de onboarding para abrir a configuração de acesso a notificações.
 
 ## Etapa 2 — Experiência Now Playing
 

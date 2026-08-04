@@ -9,6 +9,7 @@ import android.media.session.MediaSession
 import android.media.session.MediaSessionManager
 import android.media.session.PlaybackState
 import android.os.SystemClock
+import android.provider.Settings
 import br.com.vinilapp.domain.model.NowPlayingState
 import br.com.vinilapp.service.notification.NowPlayingNotificationListenerService
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -44,6 +45,10 @@ class AndroidMediaSessionDataSource @Inject constructor(
             refreshRequests,
             ticks
         ) { sessions, tokens, snapshots, _, _ ->
+            if (!context.hasNotificationListenerAccess()) {
+                return@combine NowPlayingState.PermissionRequired
+            }
+
             val notificationControllers = tokens.values.mapNotNull(::controllerForToken)
             val controllers = (sessions + notificationControllers).distinctBy { it.sessionToken }
 
@@ -69,18 +74,56 @@ class AndroidMediaSessionDataSource @Inject constructor(
 
     private fun observeActiveSessions(): Flow<List<MediaController>> = callbackFlow {
         val componentName = ComponentName(context, NowPlayingNotificationListenerService::class.java)
+        val observedControllers = mutableMapOf<MediaSession.Token, ObservedMediaController>()
+
+        fun updateControllers(controllers: List<MediaController>) {
+            val activeTokens = controllers.map { controller -> controller.sessionToken }.toSet()
+
+            observedControllers
+                .filterKeys { token -> token !in activeTokens }
+                .forEach { (token, observedController) ->
+                    observedControllers.remove(token)
+                    observedController.controller.unregisterCallback(observedController.callback)
+                }
+
+            controllers.forEach { controller ->
+                if (controller.sessionToken !in observedControllers) {
+                    val callback = object : MediaController.Callback() {
+                        override fun onMetadataChanged(metadata: MediaMetadata?) {
+                            trySend(loadActiveSessions())
+                        }
+
+                        override fun onPlaybackStateChanged(state: PlaybackState?) {
+                            trySend(loadActiveSessions())
+                        }
+                    }
+                    controller.registerCallback(callback)
+                    observedControllers[controller.sessionToken] = ObservedMediaController(
+                        controller = controller,
+                        callback = callback
+                    )
+                }
+            }
+
+            trySend(controllers)
+        }
+
         val listener = MediaSessionManager.OnActiveSessionsChangedListener { controllers ->
-            trySend(controllers.orEmpty())
+            updateControllers(controllers.orEmpty())
         }
         var isRegistered = false
 
-        trySend(loadActiveSessions())
+        updateControllers(loadActiveSessions())
         runCatching {
             mediaSessionManager.addOnActiveSessionsChangedListener(listener, componentName)
             isRegistered = true
         }
 
         awaitClose {
+            observedControllers.values.forEach { observedController ->
+                observedController.controller.unregisterCallback(observedController.callback)
+            }
+            observedControllers.clear()
             if (isRegistered) {
                 mediaSessionManager.removeOnActiveSessionsChangedListener(listener)
             }
@@ -143,6 +186,27 @@ class AndroidMediaSessionDataSource @Inject constructor(
             delay(POSITION_REFRESH_INTERVAL_MILLIS)
         }
     }
+}
+
+private data class ObservedMediaController(
+    val controller: MediaController,
+    val callback: MediaController.Callback
+)
+
+private fun Context.hasNotificationListenerAccess(): Boolean {
+    val enabledListeners = Settings.Secure.getString(
+        contentResolver,
+        ENABLED_NOTIFICATION_LISTENERS_SETTING
+    ).orEmpty()
+    val listenerComponent = ComponentName(this, NowPlayingNotificationListenerService::class.java)
+    val flattenedListener = listenerComponent.flattenToString()
+
+    return enabledListeners
+        .split(ENABLED_NOTIFICATION_LISTENERS_SEPARATOR)
+        .any { enabledComponent ->
+            enabledComponent.equals(flattenedListener, ignoreCase = true) ||
+                enabledComponent.startsWith("$packageName/", ignoreCase = true)
+        }
 }
 
 private fun MediaMetadata.text(key: String): String = getText(key)?.toString().orEmpty()
@@ -218,3 +282,5 @@ private fun Context.appName(packageName: String): String {
 }
 
 private const val POSITION_REFRESH_INTERVAL_MILLIS = 1_000L
+private const val ENABLED_NOTIFICATION_LISTENERS_SETTING = "enabled_notification_listeners"
+private const val ENABLED_NOTIFICATION_LISTENERS_SEPARATOR = ':'

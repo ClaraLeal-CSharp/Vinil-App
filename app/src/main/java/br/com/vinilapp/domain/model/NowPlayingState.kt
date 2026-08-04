@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 
 /** Estado de reprodução atual exposto pelas fontes oficiais de mídia do Android. */
 sealed interface NowPlayingState {
+    data object PermissionRequired : NowPlayingState
+
     data object Unavailable : NowPlayingState
 
     data class Available(

@@ -29,6 +29,7 @@ class NowPlayingViewModel @Inject constructor(
 }
 
 private fun NowPlayingState.toUiState(): NowPlayingUiState = when (this) {
+    NowPlayingState.PermissionRequired -> NowPlayingUiState(needsNotificationAccess = true)
     NowPlayingState.Unavailable -> NowPlayingUiState()
     is NowPlayingState.Available -> NowPlayingUiState(
         title = title,
