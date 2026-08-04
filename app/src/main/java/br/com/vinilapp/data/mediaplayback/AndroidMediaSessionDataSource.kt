@@ -8,11 +8,14 @@ import android.media.session.MediaController
 import android.media.session.MediaSession
 import android.media.session.MediaSessionManager
 import android.media.session.PlaybackState
+import android.os.Build
 import android.os.SystemClock
 import android.provider.Settings
 import br.com.vinilapp.domain.model.NowPlayingState
+import br.com.vinilapp.domain.model.PlaybackCommand
 import br.com.vinilapp.service.notification.NowPlayingNotificationListenerService
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.channels.awaitClose
@@ -33,6 +36,7 @@ class AndroidMediaSessionDataSource @Inject constructor(
     private val notificationTokens = MutableStateFlow<Map<String, MediaSession.Token>>(emptyMap())
     private val notificationSnapshots = MutableStateFlow<List<NotificationMediaSnapshot>>(emptyList())
     private val refreshRequests = MutableStateFlow(0)
+    private val appNames = ConcurrentHashMap<String, String>()
 
     override fun observeNowPlaying(): Flow<NowPlayingState> {
         val activeSessions = observeActiveSessions().onStart { emit(loadActiveSessions()) }
@@ -60,6 +64,30 @@ class AndroidMediaSessionDataSource @Inject constructor(
         }.distinctUntilChanged()
     }
 
+    override fun sendPlaybackCommand(command: PlaybackCommand) {
+        if (!context.hasNotificationListenerAccess()) {
+            return
+        }
+
+        val controller = activeControllers().firstOrNull() ?: return
+        val controls = controller.transportControls
+
+        runCatching {
+            when (command) {
+                PlaybackCommand.Previous -> controls.skipToPrevious()
+                PlaybackCommand.PlayPause -> {
+                    if (controller.playbackState?.state == PlaybackState.STATE_PLAYING) {
+                        controls.pause()
+                    } else {
+                        controls.play()
+                    }
+                }
+                PlaybackCommand.Next -> controls.skipToNext()
+            }
+        }
+        refresh()
+    }
+
     fun refreshFromNotificationListener(activeNotifications: List<NotificationMediaSnapshot>) {
         notificationTokens.value = activeNotifications
             .mapNotNull { snapshot -> snapshot.sessionToken }
@@ -78,13 +106,13 @@ class AndroidMediaSessionDataSource @Inject constructor(
 
         fun updateControllers(controllers: List<MediaController>) {
             val activeTokens = controllers.map { controller -> controller.sessionToken }.toSet()
+            val inactiveTokens = observedControllers.keys.filter { token -> token !in activeTokens }
 
-            observedControllers
-                .filterKeys { token -> token !in activeTokens }
-                .forEach { (token, observedController) ->
-                    observedControllers.remove(token)
+            inactiveTokens.forEach { token ->
+                observedControllers.remove(token)?.let { observedController ->
                     observedController.controller.unregisterCallback(observedController.callback)
                 }
+            }
 
             controllers.forEach { controller ->
                 if (controller.sessionToken !in observedControllers) {
@@ -142,6 +170,14 @@ class AndroidMediaSessionDataSource @Inject constructor(
         MediaController(context, token)
     }.getOrNull()
 
+    private fun activeControllers(): List<MediaController> {
+        val notificationControllers = notificationTokens.value.values.mapNotNull(::controllerForToken)
+
+        return (loadActiveSessions() + notificationControllers)
+            .distinctBy { controller -> controller.sessionToken }
+            .sortedWith(controllerComparator())
+    }
+
     private fun controllerComparator(): Comparator<MediaController> = compareByDescending<MediaController> {
         it.playbackState?.state == PlaybackState.STATE_PLAYING
     }.thenByDescending {
@@ -175,7 +211,7 @@ class AndroidMediaSessionDataSource @Inject constructor(
             positionMillis = positionMillis,
             albumArt = metadata.albumArt(),
             sourcePackageName = packageName,
-            sourceAppName = context.appName(packageName),
+            sourceAppName = appName(packageName),
             isPlaying = playbackState?.state == PlaybackState.STATE_PLAYING
         )
     }
@@ -185,6 +221,10 @@ class AndroidMediaSessionDataSource @Inject constructor(
             emit(SystemClock.elapsedRealtime())
             delay(POSITION_REFRESH_INTERVAL_MILLIS)
         }
+    }
+
+    private fun appName(packageName: String): String = appNames.getOrPut(packageName) {
+        context.appName(packageName)
     }
 }
 
@@ -276,7 +316,12 @@ private fun Context.appName(packageName: String): String {
     }
 
     return runCatching {
-        val applicationInfo = packageManager.getApplicationInfo(packageName, 0)
+        val applicationInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            packageManager.getApplicationInfo(packageName, android.content.pm.PackageManager.ApplicationInfoFlags.of(0))
+        } else {
+            @Suppress("DEPRECATION")
+            packageManager.getApplicationInfo(packageName, 0)
+        }
         packageManager.getApplicationLabel(applicationInfo).toString()
     }.getOrDefault(packageName)
 }

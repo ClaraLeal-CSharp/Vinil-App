@@ -42,7 +42,13 @@ import br.com.vinilapp.core.designsystem.theme.VinilTheme
 /** Interface principal alimentada pelas sessões de mídia expostas pelo Android. */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun NowPlayingScreen(uiState: NowPlayingUiState, onOpenNotificationAccessSettings: () -> Unit = {}) {
+fun NowPlayingScreen(
+    uiState: NowPlayingUiState,
+    onOpenNotificationAccessSettings: () -> Unit = {},
+    onPreviousClick: () -> Unit = {},
+    onPlayPauseClick: () -> Unit = {},
+    onNextClick: () -> Unit = {}
+) {
     val colors = VinilTheme.colors
     val fonts = VinilTheme.fonts
     val sizes = VinilTheme.sizes
@@ -117,7 +123,13 @@ fun NowPlayingScreen(uiState: NowPlayingUiState, onOpenNotificationAccessSetting
                 if (displayState.needsNotificationAccess) {
                     NotificationAccessAction(onClick = onOpenNotificationAccessSettings)
                 } else {
-                    PlaybackControls(isPlaying = displayState.isPlaying)
+                    PlaybackControls(
+                        isPlaying = displayState.isPlaying,
+                        isEnabled = displayState.isAvailable,
+                        onPreviousClick = onPreviousClick,
+                        onPlayPauseClick = onPlayPauseClick,
+                        onNextClick = onNextClick
+                    )
                 }
             }
         }
@@ -280,7 +292,13 @@ private fun NotificationAccessAction(onClick: () -> Unit) {
 }
 
 @Composable
-private fun PlaybackControls(isPlaying: Boolean) {
+private fun PlaybackControls(
+    isPlaying: Boolean,
+    isEnabled: Boolean,
+    onPreviousClick: () -> Unit,
+    onPlayPauseClick: () -> Unit,
+    onNextClick: () -> Unit
+) {
     val sizes = VinilTheme.sizes
 
     Row(
@@ -295,7 +313,8 @@ private fun PlaybackControls(isPlaying: Boolean) {
             modifier = Modifier.weight(sizes.secondaryControlWeight),
             label = stringResource(R.string.now_playing_previous),
             isPrimary = false,
-            onClick = {}
+            isEnabled = isEnabled,
+            onClick = onPreviousClick
         )
         PlaybackButton(
             modifier = Modifier
@@ -308,19 +327,27 @@ private fun PlaybackControls(isPlaying: Boolean) {
                 }
             ),
             isPrimary = true,
-            onClick = {}
+            isEnabled = isEnabled,
+            onClick = onPlayPauseClick
         )
         PlaybackButton(
             modifier = Modifier.weight(sizes.secondaryControlWeight),
             label = stringResource(R.string.now_playing_next),
             isPrimary = false,
-            onClick = {}
+            isEnabled = isEnabled,
+            onClick = onNextClick
         )
     }
 }
 
 @Composable
-private fun PlaybackButton(label: String, isPrimary: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun PlaybackButton(
+    label: String,
+    isPrimary: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    isEnabled: Boolean = true
+) {
     val controls = VinilTheme.controls
     val fonts = VinilTheme.fonts
 
@@ -333,6 +360,7 @@ private fun PlaybackButton(label: String, isPrimary: Boolean, onClick: () -> Uni
             }
         ),
         onClick = onClick,
+        enabled = isEnabled,
         shape = controls.cornerShape,
         colors = ButtonDefaults.buttonColors(
             containerColor = if (isPrimary) controls.containerColor else controls.secondaryContainerColor,

@@ -26,6 +26,7 @@
 
 - [x] Exibir título, artista, álbum, aplicativo de origem, capa, duração e posição.
 - [x] Exibir estado de reprodução e ausência de conteúdo.
+- [x] Conectar controles de faixa anterior, tocar/pausar e próxima faixa a sessões compatíveis.
 - [ ] Avaliar cache específico para capas quando houver URLs ou imagens externas estáveis.
 - [x] Criar animação fluida do disco de vinil.
 
@@ -37,6 +38,7 @@
 
 ## Etapa 4 — Qualidade
 
-- [ ] Adicionar testes unitários para ViewModels e mapeadores.
+- [x] Revisar código duplicado, arquivos grandes, funções grandes, nomes, bugs prováveis, performance, memória, organização, documentação, comentários, warnings e TODOs.
+- [ ] Adicionar testes unitários para ViewModels, mapeadores e seleção de sessão.
 - [ ] Adicionar testes de interface essenciais.
 - [ ] Revisar acessibilidade, desempenho e internacionalização.

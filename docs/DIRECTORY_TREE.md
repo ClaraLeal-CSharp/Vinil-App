@@ -35,9 +35,13 @@ VinilApp/
 │       │   │   ├── AppModule.kt
 │       │   │   └── RepositoryModule.kt
 │       │   ├── domain/
-│       │   │   ├── model/NowPlayingState.kt
+│       │   │   ├── model/
+│       │   │   │   ├── NowPlayingState.kt
+│       │   │   │   └── PlaybackCommand.kt
 │       │   │   ├── repository/NowPlayingRepository.kt
-│       │   │   └── usecase/ObserveNowPlayingUseCase.kt
+│       │   │   └── usecase/
+│       │   │       ├── ControlPlaybackUseCase.kt
+│       │   │       └── ObserveNowPlayingUseCase.kt
 │       │   ├── feature/nowplaying/presentation/
 │       │   │   ├── NowPlayingRoute.kt
 │       │   │   ├── NowPlayingScreen.kt
@@ -63,4 +67,4 @@ VinilApp/
 └── settings.gradle.kts
 ```
 
-`AndroidMediaSessionDataSource` acessa `MediaSessionManager` e recebe tokens/snapshots do `NowPlayingNotificationListenerService`. O design system centraliza os tokens visuais no tema; telas e componentes não devem definir cores ou estilos fixos. `VinylDisk` concentra o desenho do disco em Canvas e a animação de rotação, ativada quando há reprodução em andamento. A tela `NowPlayingScreen` exibe metadados reais quando um player compatível expõe sessão ou notificação de mídia; o app não implementa player próprio.
+`AndroidMediaSessionDataSource` acessa `MediaSessionManager`, recebe tokens/snapshots do `NowPlayingNotificationListenerService` e encaminha comandos de transporte à sessão ativa. O design system centraliza os tokens visuais no tema; telas e componentes não devem definir cores ou estilos fixos. `VinylDisk` concentra o desenho do disco em Canvas e a animação de rotação, ativada quando há reprodução em andamento. A tela `NowPlayingScreen` exibe metadados reais quando um player compatível expõe sessão ou notificação de mídia; o app não implementa player próprio.

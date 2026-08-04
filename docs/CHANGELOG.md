@@ -28,3 +28,14 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo.
 - Rotação do disco sincronizada com o estado de reprodução, incluindo desaceleração suave ao pausar.
 - Estado explícito para acesso a notificações pendente, com botão para abrir a configuração do Android.
 - Observação de callbacks de `MediaController` para atualizar metadados e reprodução quando o player muda.
+- Comandos reais de faixa anterior, tocar/pausar e próxima faixa enviados à sessão de mídia ativa.
+
+### Alterado
+
+- Controles de reprodução ficam desabilitados quando não há mídia ativa.
+- Documentação atualizada para refletir controles funcionais e a revisão técnica do projeto.
+
+### Corrigido
+
+- Remoção de callbacks de sessão sem modificar o mapa de controladores durante a iteração.
+- Cache de nomes de aplicativos de origem para evitar consultas repetidas ao `PackageManager`.

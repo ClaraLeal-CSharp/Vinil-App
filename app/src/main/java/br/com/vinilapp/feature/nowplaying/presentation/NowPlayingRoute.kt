@@ -17,6 +17,9 @@ fun NowPlayingRoute(viewModel: NowPlayingViewModel = hiltViewModel()) {
         uiState = uiState,
         onOpenNotificationAccessSettings = {
             context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
-        }
+        },
+        onPreviousClick = viewModel::onPreviousClick,
+        onPlayPauseClick = viewModel::onPlayPauseClick,
+        onNextClick = viewModel::onNextClick
     )
 }

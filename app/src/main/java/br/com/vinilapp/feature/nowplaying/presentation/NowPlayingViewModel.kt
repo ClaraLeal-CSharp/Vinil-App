@@ -3,6 +3,8 @@ package br.com.vinilapp.feature.nowplaying.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.vinilapp.domain.model.NowPlayingState
+import br.com.vinilapp.domain.model.PlaybackCommand
+import br.com.vinilapp.domain.usecase.ControlPlaybackUseCase
 import br.com.vinilapp.domain.usecase.ObserveNowPlayingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -13,7 +15,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class NowPlayingViewModel @Inject constructor(
-    observeNowPlayingUseCase: ObserveNowPlayingUseCase
+    observeNowPlayingUseCase: ObserveNowPlayingUseCase,
+    private val controlPlaybackUseCase: ControlPlaybackUseCase
 ) : ViewModel() {
     private val mutableUiState = MutableStateFlow(NowPlayingUiState())
 
@@ -24,6 +27,24 @@ class NowPlayingViewModel @Inject constructor(
             observeNowPlayingUseCase().collect { nowPlayingState ->
                 mutableUiState.value = nowPlayingState.toUiState()
             }
+        }
+    }
+
+    fun onPreviousClick() {
+        sendPlaybackCommand(PlaybackCommand.Previous)
+    }
+
+    fun onPlayPauseClick() {
+        sendPlaybackCommand(PlaybackCommand.PlayPause)
+    }
+
+    fun onNextClick() {
+        sendPlaybackCommand(PlaybackCommand.Next)
+    }
+
+    private fun sendPlaybackCommand(command: PlaybackCommand) {
+        viewModelScope.launch {
+            controlPlaybackUseCase(command)
         }
     }
 }

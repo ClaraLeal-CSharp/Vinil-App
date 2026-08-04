@@ -20,15 +20,15 @@ Centraliza a composição da aplicação. `VinilApplication` inicializa Hilt, `M
 
 ### `feature`
 
-Agrupa cada recurso por contexto. Hoje contém `nowplaying/presentation`, com rota, tela principal, estado de UI e `ViewModel`. A interface exibe disco, capa central, metadados de mídia, progresso e controles visuais. Os botões ainda não executam reprodução e a tela não conhece diretamente APIs Android de mídia.
+Agrupa cada recurso por contexto. Hoje contém `nowplaying/presentation`, com rota, tela principal, estado de UI e `ViewModel`. A interface exibe disco, capa central, metadados de mídia, progresso e controles de reprodução. A tela recebe callbacks da rota e não conhece diretamente APIs Android de mídia.
 
 ### `domain`
 
-Contém regras e contratos independentes da implementação concreta. `NowPlayingRepository` é consumido pelo caso de uso e pelo ViewModel. `NowPlayingState` representa o estado atual, com variação para permissão necessária, mídia indisponível ou metadados detectados.
+Contém regras e contratos independentes da implementação concreta. `NowPlayingRepository` é consumido pelos casos de uso e pelo ViewModel. `NowPlayingState` representa o estado atual, com variação para permissão necessária, mídia indisponível ou metadados detectados. `PlaybackCommand` modela os comandos de faixa anterior, tocar/pausar e próxima faixa sem expor tipos Android à camada de apresentação.
 
 ### `data`
 
-Contém o contrato de `MediaSessionDataSource`, a implementação `AndroidMediaSessionDataSource` e o repositório. A fonte usa `MediaSessionManager` para observar sessões ativas e recebe tokens/snapshots do listener de notificações como complemento. O mapeamento extrai título, artista, álbum, duração, posição calculada, capa em `Bitmap`, pacote e nome do aplicativo responsável.
+Contém o contrato de `MediaSessionDataSource`, a implementação `AndroidMediaSessionDataSource` e o repositório. A fonte usa `MediaSessionManager` para observar sessões ativas e recebe tokens/snapshots do listener de notificações como complemento. O mapeamento extrai título, artista, álbum, duração, posição calculada, capa em `Bitmap`, pacote e nome do aplicativo responsável. A mesma fonte escolhe a sessão ativa mais relevante e envia comandos por `MediaController.TransportControls` quando o player de origem aceita transporte externo.
 
 ### `di`
 
@@ -55,6 +55,7 @@ O Material 3 permanece como biblioteca de componentes, mas recebe `ColorScheme`,
 3. O contrato em `domain` expõe um `Flow`.
 4. O ViewModel converte o estado de domínio em estado de apresentação.
 5. A tela Compose coleta o estado de modo ciente do ciclo de vida.
+6. Ações de anterior, tocar/pausar e próxima faixa voltam pelo ViewModel até a sessão de mídia ativa, sem acoplar Compose às APIs Android de mídia.
 
 O `NotificationListenerService` complementa esse fluxo enviando tokens e snapshots de notificações de mídia ao data source. Quando múltiplas sessões existem, a fonte prioriza sessões em reprodução, depois sessões com metadados exibíveis e, por fim, a sessão com atualização de posição mais recente.
 
@@ -63,10 +64,11 @@ O `NotificationListenerService` complementa esse fluxo enviando tokens e snapsho
 - Coroutines e `Flow` serão o mecanismo de atualização assíncrona.
 - Capas são lidas de `MediaMetadata` ou do ícone da notificação quando disponíveis.
 - Navigation Compose concentra os destinos em `app/navigation`.
-- Hilt está configurado para a composição futura das dependências, sem fontes de dados ativas.
+- Hilt injeta a fonte Android de mídia, repositório, casos de uso e ViewModel.
 - Android Lint e ktlint protegem a consistência técnica e de estilo.
 - Strings de interface ficam em recursos Android para permitir localização.
 - Estilos visuais entram pelo `VinilTheme`; features não devem manter cores fixas ou dimensões próprias.
 - A integração depende da permissão manual de acesso a notificações; sem ela, o Android não permite consultar sessões de outros apps e a interface mostra uma ação para abrir essa configuração.
 - O app não usa APIs experimentais nem implementa player próprio.
-- A interface principal usa dados reais quando disponíveis, anima mudanças de mídia e mantém controles sem ação; comandos de reprodução ficam para etapa futura.
+- A interface principal usa dados reais quando disponíveis, anima mudanças de mídia e envia comandos de reprodução para sessões compatíveis.
+- Os controles ficam desabilitados quando não há mídia ativa, evitando comandos sem sessão alvo.

@@ -73,12 +73,13 @@ A árvore completa e atualizada está em [DIRECTORY_TREE.md](docs/DIRECTORY_TREE
 - Tema padrão aplicado sobre Compose e Material 3, sem cores fixas nos componentes.
 - Navegação Compose centralizada com destino inicial de Now Playing.
 - Hilt configurado para Activity, Application, ViewModel e módulos futuros.
-- Interface principal de Now Playing conectada aos dados reais quando disponíveis, com disco, capa central, metadados, barra de progresso e botões sem ação real.
+- Interface principal de Now Playing conectada aos dados reais quando disponíveis, com disco, capa central, metadados, barra de progresso e controles de reprodução.
 - Layout responsivo baseado em tokens de tema, com o disco ocupando a área visual dominante da tela.
 - ViewModel conectado ao caso de uso de reprodução atual.
 - Leitura automática de título, artista, álbum, duração, posição, capa, pacote e nome do aplicativo responsável.
 - Priorização de sessões em reprodução e fallback por notificação de transporte quando não houver uma sessão mapeável.
 - Estado específico para acesso a notificações não concedido, com atalho para as configurações do Android.
+- Controles de faixa anterior, tocar/pausar e próxima faixa enviados para a sessão de mídia ativa quando o player expõe comandos compatíveis.
 - Animações suaves para reprodução: o disco gira ao tocar, desacelera ao pausar e capa, metadados e progresso transitam quando a música muda.
 - Lint Android e ktlint configurados.
 - Configuração de extensões recomendadas para VS Code.
@@ -86,7 +87,20 @@ A árvore completa e atualizada está em [DIRECTORY_TREE.md](docs/DIRECTORY_TREE
 ## Funcionalidades futuras
 
 - Fluxo de onboarding para abrir diretamente a tela de permissão de acesso a notificações.
-- Controles de reprodução conectados a sessões compatíveis.
 - Personalização visual e preferências persistentes.
+
+## Qualidade
+
+A revisão técnica atual cobre código duplicado, arquivos e funções grandes, nomes, bugs prováveis, performance, memória, organização, documentação, comentários, warnings e TODOs. Não há TODOs no código fonte. Os principais pontos tratados foram:
+
+- Correção dos botões de anterior, tocar/pausar e próxima faixa por meio de `MediaController.TransportControls`.
+- Proteção contra remoção de callbacks de sessão durante iteração do mapa de controladores observados.
+- Cache simples dos nomes de aplicativos de origem para reduzir consultas repetidas ao `PackageManager`.
+- Atualização dos textos e documentos que descreviam os controles como apenas visuais.
+
+Avisos residuais de build observados no ambiente local:
+
+- O Android SDK command-line tools instalado entende XML até versão 3 e encontrou XML versão 4. Atualizar as command-line tools remove o aviso.
+- `kapt` informa que suporte a Kotlin 2.x ainda é alfa e executa fallback para 1.9. O build continua passando.
 
 O planejamento completo está em [ROADMAP.md](docs/ROADMAP.md), e o histórico relevante em [CHANGELOG.md](docs/CHANGELOG.md).
