@@ -2,15 +2,17 @@
 
 O VinilApp é um aplicativo Android nativo concebido como um *Now Playing Display*: ele exibirá as informações da música reproduzida por outros aplicativos. Não é um player de música. A futura integração usará exclusivamente APIs oficiais do Android, como `MediaSession` e `NotificationListenerService`.
 
-Nesta primeira etapa, o projeto contém apenas a base técnica, a estrutura de pacotes, a tela inicial estática e a documentação. Nenhuma integração de mídia foi implementada.
+Nesta etapa, o projeto contém apenas a base técnica: estrutura de pacotes, navegação, DI, tema, qualidade de código, uma tela inicial estática e documentação. Nenhuma integração de mídia foi implementada.
 
 ## Tecnologias
 
 - Kotlin e Coroutines
 - Jetpack Compose com Material 3
 - Arquitetura MVVM, com separação inspirada em Clean Architecture
+- Navigation Compose e Hilt, preparados para o crescimento do aplicativo
 - Coil, preparado para o carregamento futuro das capas
 - Gradle Kotlin DSL e Gradle Wrapper
+- Android Lint e ktlint
 - `compileSdk` e `targetSdk` 36; `minSdk` 24
 
 ## Requisitos
@@ -30,6 +32,8 @@ Nesta primeira etapa, o projeto contém apenas a base técnica, a estrutura de p
 ```bash
 ./gradlew assembleDebug
 ./gradlew installDebug
+./gradlew lintDebug
+./gradlew ktlintCheck
 ```
 
 O APK de depuração é produzido em `app/build/outputs/apk/debug/app-debug.apk`.
@@ -40,9 +44,11 @@ O projeto aplica MVVM na interface e separa responsabilidades em camadas:
 
 - `feature`: rotas, telas, estado de interface e ViewModels.
 - `domain`: contratos e modelos independentes do Android.
-- `data`: implementações futuras das fontes oficiais de mídia.
+- `data`: contratos e implementações futuras das fontes oficiais de mídia.
 - `core`: componentes visuais e utilitários compartilhados.
-- `app`: composição da aplicação e ponto de entrada Compose.
+- `app`: composição da aplicação, navegação e ponto de entrada Compose.
+- `di`: módulos Hilt que ligarão contratos e implementações.
+- `service`: pontos de extensão para serviços Android futuros, ainda inativos.
 
 Consulte [ARCHITECTURE.md](docs/ARCHITECTURE.md) para os detalhes.
 
@@ -54,8 +60,11 @@ A árvore completa e atualizada está em [DIRECTORY_TREE.md](docs/DIRECTORY_TREE
 
 - Projeto Android configurado para API 36.
 - Tema Material 3 com suporte ao modo escuro do sistema.
-- Tela inicial estática de Now Playing.
-- Contrato de domínio e ViewModel de base, sem conexão com dados externos.
+- Navegação Compose centralizada com destino inicial de Now Playing.
+- Hilt configurado para Activity, Application, ViewModel e módulos futuros.
+- Tela inicial estática de Now Playing e ViewModel de base, sem conexão com dados externos.
+- Contratos de dados, domínio e serviço criados sem acesso às APIs Android.
+- Lint Android e ktlint configurados.
 - Configuração de extensões recomendadas para VS Code.
 
 ## Funcionalidades futuras

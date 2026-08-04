@@ -4,6 +4,8 @@
 VinilApp/
 ├── .vscode/
 │   └── extensions.json                 # Extensões recomendadas para VS Code
+├── .editorconfig                       # Convenções de formatação Kotlin
+├── .gitignore
 ├── app/
 │   ├── build.gradle.kts                # Configuração do módulo Android
 │   ├── proguard-rules.pro
@@ -12,18 +14,34 @@ VinilApp/
 │       ├── java/br/com/vinilapp/
 │       │   ├── MainActivity.kt
 │       │   ├── app/
-│       │   │   └── VinilApp.kt
+│       │   │   ├── VinilApp.kt
+│       │   │   ├── VinilApplication.kt
+│       │   │   └── navigation/
+│       │   │       ├── AppDestination.kt
+│       │   │       └── VinilNavHost.kt
 │       │   ├── core/designsystem/
 │       │   │   ├── AppDimensions.kt
-│       │   │   └── theme/Theme.kt
+│       │   │   └── theme/
+│       │   │       ├── Color.kt
+│       │   │       ├── Theme.kt
+│       │   │       └── Type.kt
+│       │   ├── data/
+│       │   │   ├── mediaplayback/MediaSessionDataSource.kt
+│       │   │   ├── notification/NotificationDataSource.kt
+│       │   │   └── repository/NowPlayingRepositoryImpl.kt
+│       │   ├── di/
+│       │   │   ├── AppModule.kt
+│       │   │   └── RepositoryModule.kt
 │       │   ├── domain/
 │       │   │   ├── model/NowPlayingState.kt
-│       │   │   └── repository/NowPlayingRepository.kt
-│       │   └── feature/nowplaying/presentation/
-│       │       ├── NowPlayingRoute.kt
-│       │       ├── NowPlayingScreen.kt
-│       │       ├── NowPlayingUiState.kt
-│       │       └── NowPlayingViewModel.kt
+│       │   │   ├── repository/NowPlayingRepository.kt
+│       │   │   └── usecase/ObserveNowPlayingUseCase.kt
+│       │   ├── feature/nowplaying/presentation/
+│       │   │   ├── NowPlayingRoute.kt
+│       │   │   ├── NowPlayingScreen.kt
+│       │   │   ├── NowPlayingUiState.kt
+│       │   │   └── NowPlayingViewModel.kt
+│       │   └── service/notification/NowPlayingNotificationListenerService.kt
 │       └── res/values/
 │           ├── strings.xml
 │           └── themes.xml
@@ -35,7 +53,6 @@ VinilApp/
 ├── gradle/
 │   ├── libs.versions.toml              # Catálogo de versões
 │   └── wrapper/
-├── .gitignore
 ├── build.gradle.kts
 ├── gradle.properties
 ├── gradlew
@@ -44,4 +61,4 @@ VinilApp/
 └── settings.gradle.kts
 ```
 
-Os diretórios `data` e `service` serão adicionados com código concreto nas etapas de integração de mídia; não há arquivos vazios apenas para reservar estrutura.
+Os contratos e marcadores de `data` e `service` não acessam APIs Android nesta etapa. Eles existem para estabilizar as fronteiras entre as camadas antes da implementação da detecção de mídia.

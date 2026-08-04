@@ -6,6 +6,11 @@ Todas as mudanças relevantes deste projeto serão registradas neste arquivo.
 
 ### Adicionado
 
+- Navegação central com Navigation Compose e destino inicial de Now Playing.
+- Hilt configurado com `VinilApplication`, `MainActivity`, ViewModel e módulos de extensão.
+- Pacotes e contratos iniciais para dados de sessões, notificações, repositório, caso de uso e serviço futuro.
+- Android Lint, ktlint e regras de formatação em `.editorconfig`.
+- Arquivos de tema separados em cores, tipografia e composição do tema.
 - Base arquitetural com MVVM e separação entre `app`, `core`, `domain` e `feature`.
 - Tela estática inicial de Now Playing, sem integração de mídia.
 - Contrato de repositório e estado de domínio para a futura fonte de reprodução.

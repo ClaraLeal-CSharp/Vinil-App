@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -21,7 +21,7 @@ import br.com.vinilapp.core.designsystem.AppDimensions
 @OptIn(ExperimentalMaterial3Api::class)
 fun NowPlayingScreen() {
     Scaffold(
-        topBar = { TopAppBar(title = { Text(stringResource(R.string.now_playing_title)) }) },
+        topBar = { TopAppBar(title = { Text(stringResource(R.string.now_playing_title)) }) }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -30,17 +30,17 @@ fun NowPlayingScreen() {
                 .padding(horizontal = AppDimensions.ScreenPadding),
             verticalArrangement = Arrangement.spacedBy(
                 AppDimensions.ContentSpacing,
-                Alignment.CenterVertically,
+                Alignment.CenterVertically
             ),
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = stringResource(R.string.now_playing_unavailable),
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.headlineSmall
             )
             Text(
                 text = stringResource(R.string.now_playing_setup_description),
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyLarge
             )
         }
     }

@@ -2,6 +2,11 @@
 .gradle/
 local.properties
 .idea/
+.vscode/*.log
+.DS_Store
+*.keystore
+*.jks
+keystore.properties
 build/
 app/build/
 captures/

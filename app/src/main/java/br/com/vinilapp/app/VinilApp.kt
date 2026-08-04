@@ -1,10 +1,12 @@
 package br.com.vinilapp.app
 
 import androidx.compose.runtime.Composable
-import br.com.vinilapp.feature.nowplaying.presentation.NowPlayingRoute
+import androidx.navigation.compose.rememberNavController
+import br.com.vinilapp.app.navigation.VinilNavHost
 
 /** Ponto de entrada da árvore Compose do aplicativo. */
 @Composable
 fun VinilApp() {
-    NowPlayingRoute()
+    val navController = rememberNavController()
+    VinilNavHost(navController = navController)
 }

@@ -1,11 +1,11 @@
 # Roadmap
 
-## Etapa 0 — Fundação
+## Etapa 0 — Fundação (concluída)
 
 - [x] Configurar Kotlin, Compose, Material 3 e API 36.
-- [x] Definir estrutura de pacotes, MVVM e contrato de domínio.
-- [x] Preparar documentação e suporte a VS Code.
-- [x] Adicionar dependências para Coroutines, ViewModel e Coil.
+- [x] Definir pacotes `app`, `core`, `data`, `di`, `domain`, `feature` e `service`.
+- [x] Preparar MVVM, Navigation Compose, Hilt, catálogo de versões e temas.
+- [x] Configurar Android Lint, ktlint, `.editorconfig`, `.gitignore`, documentação e suporte a VS Code.
 
 ## Etapa 1 — Fonte de dados de mídia
 
